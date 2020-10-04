@@ -19,5 +19,5 @@ jobs:
           environment: DEBUG=true,BOT_TOKEN=${{ secrets.BOT_TOKEN }}
           memory: '128'
           execution_timeout: '2'
-          service_account: ${{ secret.SERVICE_ACCOUNT }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
           source: '.'
