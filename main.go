@@ -51,16 +51,16 @@ func processUpdate(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 
 		switch update.Message.Command() {
 		case "start":
-			msg.Text = "Привет, я переводчик!"
+			msg.Text = "Привет, я переводчик!\nПодсказка - /help"
 		case "help":
-			msg.Text = "Отправь мне текст и я тебе его переведу, что может быть проще?\n Русский верну по-английски, любой другой язык верну по-русски"
+			msg.Text = "Отправь мне текст и я тебе его переведу, что может быть проще?\nРусский текст верну по-английски, любой другой язык - верну по-русски"
 		}
 
 		if _, err := bot.Send(msg); err != nil {
 			log.Println(err)
 		}
 
-	} else {
+	} else if update.Message.Text != "" {
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
 		msg.ReplyToMessageID = update.Message.MessageID
 		detected, err := googletrans.Detect(update.Message.Text)
