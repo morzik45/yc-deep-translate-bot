@@ -33,6 +33,7 @@ func getEnvAsBool(name string, defaultVal bool) bool {
 	return defaultVal
 }
 
+//Handler точка входа в cloud функцию
 func Handler(_ context.Context, request RequestBody) (*Response, error) {
 
 	var update tgbotapi.Update

@@ -16,7 +16,7 @@ jobs:
           function_id: 'd4e5c3oq40epim41ut9p'
           runtime: 'golang114'
           entrypoint: 'main.Handler'
-          environment: DEBUG=true,BOT_TOKEN=${{ secrets.BOT_TOKEN }}
+          environment: DEBUG=false,BOT_TOKEN=${{ secrets.BOT_TOKEN }}
           memory: '128'
           execution_timeout: '2'
           service_account: ${{ secrets.SERVICE_ACCOUNT }}
