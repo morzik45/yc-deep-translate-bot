@@ -21,3 +21,4 @@ jobs:
           execution_timeout: '2'
           service_account: ${{ secrets.SERVICE_ACCOUNT }}
           source: '.'
+          exclude: '.git/,.github/'
