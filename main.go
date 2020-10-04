@@ -7,6 +7,7 @@ import (
 	"github.com/mind1949/googletrans"
 	"log"
 	"os"
+	"strconv"
 )
 
 type RequestBody struct {
@@ -17,7 +18,22 @@ type Response struct {
 	StatusCode int `json:"statusCode"`
 }
 
-func Handler(ctx context.Context, request RequestBody) (*Response, error) {
+func getEnv(key string, defaultVal string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return defaultVal
+}
+
+func getEnvAsBool(name string, defaultVal bool) bool {
+	valStr := getEnv(name, "")
+	if val, err := strconv.ParseBool(valStr); err == nil {
+		return val
+	}
+	return defaultVal
+}
+
+func Handler(_ context.Context, request RequestBody) (*Response, error) {
 
 	var update tgbotapi.Update
 	err := json.Unmarshal([]byte(request.Body), &update)
@@ -26,11 +42,11 @@ func Handler(ctx context.Context, request RequestBody) (*Response, error) {
 		return &Response{StatusCode: 200}, nil
 	}
 
-	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
+	bot, err := tgbotapi.NewBotAPI(getEnv("BOT_TOKEN", ""))
 	if err != nil {
 		log.Fatal(err)
 	}
-	bot.Debug = true
+	bot.Debug = getEnvAsBool("DEBUG", false)
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
 	processUpdate(bot, &update)
@@ -63,6 +79,7 @@ func processUpdate(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 	} else if update.Message.Text != "" {
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
 		msg.ReplyToMessageID = update.Message.MessageID
+
 		detected, err := googletrans.Detect(update.Message.Text)
 		if err != nil {
 			msg.Text = err.Error()
@@ -73,6 +90,7 @@ func processUpdate(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
 			} else {
 				dst = "ru"
 			}
+
 			translate, err := Translate(update.Message.Text, dst)
 			if err != nil {
 				msg.Text = "Ошибка!\n" + translate
